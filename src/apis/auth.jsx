@@ -1,7 +1,7 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const BACKEND_URL = "http://localhost:3000/api/v1/auth";
+const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/auth";
 
 export const getUserFromToken = () => {
   const token = localStorage.getItem("token");

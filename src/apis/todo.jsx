@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BACKEND_URL = "http://localhost:3000/api/v1/todo";
+const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/todo";
+
 const token = localStorage.getItem("token");
 
 export const logTodo = async () => {
@@ -84,21 +85,17 @@ export const getTodoById = async (todoId) => {
 
 export const getTodos = async (filter) => {
   try {
-    const response = await axios.get(
-      `${BACKEND_URL}/getAll?filter=${filter}`,
-      {
-        headers: {
-          Authorization: `${token}`,
-        },
-      }
-    );
+    const response = await axios.get(`${BACKEND_URL}/getAll?filter=${filter}`, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
     console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
-
 
 export const updateTodo = async (todoId, updatedTodo) => {
   try {
