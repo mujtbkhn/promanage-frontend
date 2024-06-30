@@ -1,0 +1,17 @@
+.analytics-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .analytics-container > * {
+    flex: 1 1 calc(50% - 1rem); /* Each item will take up 50% of the container width minus the gap */
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
+  }
+  
+  @media (max-width: 600px) {
+    .analytics-container > * {
+      flex: 1 1 100%; /* On small screens, each item will take up 100% of the container width */
+    }
+  }
+  

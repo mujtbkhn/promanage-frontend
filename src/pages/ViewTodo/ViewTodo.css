@@ -1,0 +1,27 @@
+.main__todo{
+    display: flex;
+    justify-content: center;
+}
+ul {
+    /* max-height: 100px; Set the maximum height for the checklist */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
+.todo_main_view {
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid gray; */
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    width: 300px;
+    max-height: 600px;
+    background-color: white;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 1rem;
+    /* font-size: 20px; */
+  }
+  .logo{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    cursor: pointer;
+  }

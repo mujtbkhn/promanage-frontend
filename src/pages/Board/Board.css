@@ -1,0 +1,150 @@
+.board__top {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+}
+
+.board__main {
+  display: flex;
+  height: 80%;
+}
+
+.top__heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 18rem;
+}
+
+select {
+  border: none;
+}
+
+.modal__content {
+  padding: 20px;
+}
+
+.modal__section {
+  margin-bottom: 20px;
+}
+
+.modal__input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+.priority__buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.priority__button {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.priority__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.priority__dot.high {
+  background-color: red;
+}
+
+.priority__dot.moderate {
+  background-color: blue;
+}
+
+.priority__dot.low {
+  background-color: green;
+}
+
+.priority__button:hover,
+.priority__button.selected {
+  background-color: #f0f0f0;
+}
+
+.checklist__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  border: 1px solid gray;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.checklist__checkbox {
+  margin-right: 10px;
+}
+
+.checklist__input {
+  flex-grow: 1;
+  padding: 5px;
+  border: none;
+}
+
+.checklist__delete {
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.add__new {
+  margin-top: 10px;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  padding: 10px;
+  color: black;
+  font-size: 1rem;
+}
+
+.modal__buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.due__date {
+  flex: 1;
+  width: auto;
+}
+
+.modal__actions__button {
+  display: flex;
+  /* flex-direction: row;
+  justify-content: flex-end; */
+  gap: 10px;
+}
+
+.modal__action__button {
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1rem;
+  
+}
+
+.modal__action__button.save {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.modal__action__button.cancel {
+  background-color: white;
+  color: red;
+  border: 1px solid red;
+  border-radius: none !important;
+}
+
+.modal__button:hover {
+  background-color: #f0f0f0;
+}

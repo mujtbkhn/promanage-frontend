@@ -1,0 +1,24 @@
+.analytics-comp {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.5rem;
+  }
+  
+  .analytics-name {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .analytics-value {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 100px; /* Ensure enough space for alignment */
+  }
+  
+  .analytics-name p, .analytics-value p {
+    margin: 0;
+  }
+  

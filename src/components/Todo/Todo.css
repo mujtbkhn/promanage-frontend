@@ -1,0 +1,96 @@
+ul {
+  max-height: 100px; /* Adjust the maximum height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+  margin-top: 0; /* Reset margin to ensure it doesn't add extra space */
+  margin-bottom: 0; /* Reset margin to ensure it doesn't add extra space */
+}
+
+.todo_main {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: start; */
+  /* align-items: start; */
+  width: 300px;
+  max-height: 400px;
+  background-color: white;
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 1rem;
+  /* font-size: 20px; */
+}
+.pointer {
+  cursor: pointer;
+}
+ul{
+  max-height: 500px;
+}
+.common {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.todo_priority {
+  font-size: 10px;
+  position: relative;
+}
+.show {
+  position: absolute;
+  right: 5px;
+  top: 1.25rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  width: 100px;
+  height: 100px;
+  font-size: 1rem;
+  line-height: 5px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 5px;
+  background-color: white;
+}
+
+.show > p {
+  cursor: pointer;
+}
+.todo_heading {
+  font-style: bold;
+}
+.todo_checklist {
+}
+.todo_button {
+}
+button {
+  border-radius: 1rem;
+  border: none;
+  font-size: 8px;
+}
+.priority__dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.priority__dot.high {
+  background-color: red;
+}
+
+.priority__dot.moderate {
+  background-color: blue;
+}
+
+.priority__dot.low {
+  background-color: green;
+}
+.priority__button.selected{
+    background-color: gray;
+}
+.custom_button {
+  background-color: #EEECEC !important;
+  color: initial !important; /* Resetting color to initial */
+  border: none !important; /* Ensure no border is applied */
+}
+

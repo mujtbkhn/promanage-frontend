@@ -1,0 +1,41 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+.sidebar__main {
+  height: 80vh;
+}
+.main {
+  height: 100%;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+ .flex.active {
+  background-color: #ecf4fd;
+}
+/* .flex:active {
+  background-color: #ecf4fd;
+} */
+ .modal__actions{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+ }
+.modal__actions > button{
+  width: 100%;
+}
+.custom-modal {
+  border-radius: 15px;
+}
+.modal__button.save:hover{
+  background-color: #17A2B8;
+}
