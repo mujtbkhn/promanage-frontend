@@ -11,21 +11,18 @@ const ResetPage = () => {
   useEffect(() => {
     const user = getUserFromToken();
     setUserDetails(user);
-    setName(user?.name || ""); // Initialize name with the user's current name
+    setName(user?.name || "");
   }, []);
 
   const updateUser = async () => {
     try {
-      const data = await resetUser(name, currentPassword, newPassword);
-      console.log(data); // Log response for debugging
-      // Update the state with the new name
-      setUserDetails((prevDetails) => ({
-        ...prevDetails,
-        name: name,
-      }));
-      // Clear the password fields after successful update
+      console.log("before", userDetails);
+      const updatedUser = await resetUser(name, currentPassword, newPassword);
+      setUserDetails(updatedUser);
+      setName(updatedUser.name);
       setCurrentPassword("");
       setNewPassword("");
+      console.log("after", updatedUser);
     } catch (error) {
       console.error(error);
     }
