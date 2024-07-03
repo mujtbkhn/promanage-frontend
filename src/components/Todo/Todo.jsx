@@ -10,6 +10,7 @@ import {
   updateTodo,
 } from "../../apis/todo";
 import toast from "react-hot-toast";
+import { Tooltip } from "react-tooltip";
 
 const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
   const [collapse, setCollapse] = useState(true);
@@ -60,6 +61,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
 
   const openEditModal = () => {
     setEditModalOpen(true);
+    setShow(!show);
   };
 
   const closeEditModal = () => {
@@ -115,6 +117,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
   };
   const openDeleteModal = () => {
     setDeleteModalOpen(true);
+    setShow(!show);
   };
 
   const closeDeleteModal = () => {
@@ -146,6 +149,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
           fontSize: "1.5rem",
         },
       });
+      setShow(!show);
     } catch (error) {
       console.error(error);
     }
@@ -158,6 +162,8 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
     { value: "DONE", label: "DONE" },
   ];
 
+  const trimmedTitle =
+    todo.title.length >= 20 ? todo.title.slice(0, 20) + "..." : todo.title;
   return (
     <div className="todo_main">
       <div className="todo_priority common">
@@ -178,7 +184,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
           height="20"
           src="https://img.icons8.com/ios-glyphs/60/ellipsis.png"
           alt="ellipsis"
-          style={{cursor: "pointer"}}
+          style={{ cursor: "pointer" }}
           onClick={() => setShow((prev) => !prev)}
         />
         {show && (
@@ -192,9 +198,12 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
         )}
       </div>
       <div className="todo_heading">
-        <p>
-          <strong>{todo.title}</strong>
-        </p>
+        <a className={`my-anchor-element-${todo._id}`}>
+          <h3>{trimmedTitle}</h3>
+        </a>
+        <Tooltip anchorSelect={`.my-anchor-element-${todo._id}`} place="top">
+          {todo.title}
+        </Tooltip>
       </div>
       <div className="todo_checklist common">
         <div>
@@ -242,13 +251,24 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
         <div>
           <button
             style={{
-              backgroundColor: isDueDatePast(todo.dueDate) ? "red" : "#F0F0F0",
-              color: isDueDatePast(todo.dueDate) ? "white" : "initial",
+              backgroundColor:
+                sectionName === "DONE"
+                  ? "#55B054"
+                  : isDueDatePast(todo.dueDate)
+                  ? "red"
+                  : "#F0F0F0",
+              color:
+                sectionName === "DONE"
+                  ? "white"
+                  : isDueDatePast(todo.dueDate)
+                  ? "white"
+                  : "initial",
             }}
           >
             {formatDate(todo?.dueDate)}
           </button>
         </div>
+
         <div style={{ display: "flex" }}>
           {buttons
             .filter((button) => button.value !== sectionName)

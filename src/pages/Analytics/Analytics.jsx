@@ -10,7 +10,7 @@ const Analytics = () => {
     const fetchAnalytics = async () => {
       try {
         const data = await getAnalytics();
-        console.log("Analytics data:", data); // Log the data to inspect its structure
+        // console.log("Analytics data:", data); // Log the data to inspect its structure
         const analyticsArray = Object.entries(data); // Convert the object to an array of key-value pairs
         setAnalytics(analyticsArray);
       } catch (err) {

@@ -6,8 +6,13 @@ import TodoComp from "../../components/TodoComp/TodoComp";
 import Delete from "../../images/Delete.png";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Tooltip } from "react-tooltip";
 import "./Board.css";
-import { addUserByEmail, getUserByEmail, getUserFromToken } from "../../apis/auth";
+import {
+  addUserByEmail,
+  getUserByEmail,
+  getUserFromToken,
+} from "../../apis/auth";
 import { getCreateTodo, getTodos, moveTask, updateTodo } from "../../apis/todo";
 
 const Board = () => {
@@ -19,19 +24,22 @@ const Board = () => {
   const [dueDate, setDueDate] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [todos, setTodos] = useState([]);
-  const [selectedFilter, setSelectedFilter] = useState("today"); // State for selected filter
+  const [selectedFilter, setSelectedFilter] = useState("week"); // State for selected filter
   const [formErrors, setFormErrors] = useState({});
   const [openAddPeopleModal, setOpenAddPeopleModal] = useState(false); // State for Add People modal
   const [addPeople, setAddPeople] = useState("");
+  const [allowedEmails, setAllowedEmails] = useState(null);
+  const [isEmailListVisible, setIsEmailListVisible] = useState(false);
 
   useEffect(() => {
-    const user = getUserFromToken();
-    setUserDetails(user);
+    const fetchUserDetails = async () => {
+      const user = await getUserFromToken();
+      setUserDetails(user);
+    };
+    fetchUserDetails();
   }, []);
 
-  useEffect(() => {
-     
-  } , [])
+  useEffect(() => {}, []);
 
   useEffect(() => {
     fetchTodos(selectedFilter); // Fetch todos initially with default filter "today"
@@ -40,6 +48,19 @@ const Board = () => {
   useEffect(() => {
     fetchTodos();
   }, []);
+
+  useEffect(() => {
+    allowed();
+  }, []);
+
+  const allowed = async () => {
+    try {
+      const data = await getUserByEmail();
+      setAllowedEmails(data.allowedEmails);
+    } catch (error) {
+      console.error("Error Fetching Allowed Emails", error);
+    }
+  };
 
   const fetchTodos = async (filter) => {
     try {
@@ -52,6 +73,14 @@ const Board = () => {
 
   const handleFilterChange = (e) => {
     setSelectedFilter(e.target.value); // Update selected filter on change
+  };
+
+  const handleInputFocus = () => {
+    setIsEmailListVisible(true);
+  };
+
+  const handleInputBlur = () => {
+    setTimeout(() => setIsEmailListVisible(false), 200); // Delay to allow click on Assign button
   };
 
   const onOpenModal = () => setOpen(true);
@@ -181,13 +210,15 @@ const Board = () => {
   const handleAddPeople = async (email) => {
     try {
       await addUserByEmail(email); // Ensure addUserByEmail is correctly defined and used here
-      await getUserByEmail()
+      await getUserByEmail();
       console.log("Email added successfully");
+      setAddedEmail(email);
       handleCloseAddPeopleModal();
     } catch (error) {
       console.error("Error adding people", error);
     }
   };
+
   const checkedCount = checklist.filter((item) => item.completed).length;
 
   const getDaySuffix = (day) => {
@@ -214,6 +245,17 @@ const Board = () => {
 
   const date = formatDate(new Date());
 
+  const handleAssignEmail = (email) => {
+    4;
+    if (allowedEmails) {
+      console.log("Assigned to:", email); // Confirm email is correctly assigned
+      setAssignedTo(email);
+      setIsEmailListVisible(false); // Close email list after assignment
+    }
+  };
+
+  console.log(userDetails);
+
   return (
     <div className="board__top">
       <div className="top__heading">
@@ -237,7 +279,7 @@ const Board = () => {
         <div>
           <select
             value={selectedFilter}
-            onChange={(e)=> handleFilterChange(e)}
+            onChange={(e) => handleFilterChange(e)}
             name=""
             id=""
           >
@@ -332,36 +374,66 @@ const Board = () => {
               placeholder="Add an assignee"
               className="modal__input"
               value={assignedTo}
-              onChange={(e) => setAssignedTo(e.target.value)}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              onChange={(e) => setAssignedTo(e.target.value)} // Add onChange handler to update assignedTo state
             />
+            {isEmailListVisible && (
+              <div className="allowed-emails-list">
+                {allowedEmails?.map((email, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      padding: "5px 0",
+                      borderBottom: "1px solid #ccc",
+                    }}
+                  >
+                    <p>{email.email}</p>{" "}
+                    {/* Update to display email correctly */}
+                    <button onClick={() => handleAssignEmail(email.email)}>
+                      Assign
+                    </button>{" "}
+                    {/* Pass email.email as argument */}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+
           <div className="modal__section">
             <h3>
-              Checklist <span style={{ color: "red" }}>*</span> (
-              {checklist.length}/{checkedCount})
+              Checklist <span style={{ color: "red" }}>*</span> ({checkedCount}/
+              {checklist.length})
             </h3>
-            {checklist.map((item, index) => (
-              <div key={index} className="checklist__item">
-                <input
-                  type="checkbox"
-                  checked={item.completed}
-                  onChange={() => handleCheckboxChange(index)}
-                />
-                <input
-                  type="text"
-                  value={item.item}
-                  onChange={(e) => handleChecklistChange(index, e.target.value)}
-                />
-                {index > 0 && (
+            <div className="checklist__container">
+              {checklist.map((item, index) => (
+                <div key={index} className="checklist__item">
+                  <input
+                    type="checkbox"
+                    checked={item.completed}
+                    onChange={() => handleCheckboxChange(index)}
+                    className="checklist__checkbox"
+                  />
+                  <input
+                    type="text"
+                    value={item.item}
+                    onChange={(e) =>
+                      handleChecklistChange(index, e.target.value)
+                    }
+                    className="checklist__input"
+                  />
                   <img
                     onClick={() => handleRemoveChecklistItem(index)}
                     src={Delete}
                     alt="delete"
-                    style={{ cursor: "pointer" }}
+                    className="checklist__delete"
                   />
-                )}
-              </div>
-            ))}
+                </div>
+              ))}
+            </div>
             {formErrors.checklist && (
               <p className="error">{formErrors.checklist}</p>
             )}
@@ -369,6 +441,7 @@ const Board = () => {
               + Add New
             </button>
           </div>
+
           <div className="modal__section modal__buttons">
             <DatePicker
               selected={dueDate}

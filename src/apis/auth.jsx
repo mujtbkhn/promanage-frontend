@@ -63,20 +63,14 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const resetUser = async (
-  email,
-  currentPassword,
-  newName,
-  newPassword
-) => {
+export const resetUser = async (newName, currentPassword, newPassword) => {
   const token = localStorage.getItem("token");
   try {
     const response = await axios.post(
       `${BACKEND_URL}/reset`,
       {
-        email,
-        currentPassword,
         newName,
+        currentPassword,
         newPassword,
       },
       {
@@ -127,7 +121,7 @@ export const getUserByEmail = async () => {
         Authorization: `${token}`,
       },
     });
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
