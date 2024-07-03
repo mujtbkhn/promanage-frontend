@@ -42,10 +42,7 @@ function App() {
                 element={<ProtectedRoute element={ResetPage} />}
               />
             </Route>
-            <Route
-              path="/view/:todoId"
-              element={<ProtectedRoute element={ViewTodoWrapper} />}
-            />
+            <Route path="/view/:todoId" element={<ViewTodoWrapper />} />
           </Routes>
         </Suspense>
       </BrowserRouter>

@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/todo";
+// const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/todo";
+const BACKEND_URL = "http://localhost:3000/api/v1/todo";
 
 const token = localStorage.getItem("token");
 
@@ -71,11 +72,7 @@ export const getCreateTodo = async (
 
 export const getTodoById = async (todoId) => {
   try {
-    const response = await axios.get(`${BACKEND_URL}/get/${todoId}`, {
-      headers: {
-        Authorization: `${token}`,
-      },
-    });
+    const response = await axios.get(`${BACKEND_URL}/get/${todoId}`);
     // console.log(response.data);
     return response.data;
   } catch (error) {
@@ -112,6 +109,24 @@ export const updateTodo = async (todoId, updatedTodo) => {
     return response.data;
   } catch (error) {
     throw error;
+  }
+};
+
+export const updateChecklistItem = async (todoId, itemIndex, completed) => {
+  try {
+      const response = await axios.patch(
+          `${BACKEND_URL}/checklist/${todoId}/${itemIndex}`,
+          { completed },
+          {
+              headers: {
+                  Authorization: `${token}`,
+              },
+          }
+      );
+      console.log("Checklist item updated successfully:", response.data);
+      return response.data;
+  } catch (error) {
+      throw error;
   }
 };
 

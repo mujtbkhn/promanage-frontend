@@ -97,3 +97,11 @@ ul{
   border: none !important; /* Ensure no border is applied */
 }
 
+.color-assign{
+  background-color: #f1e6e5;
+  height: 20px;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+}

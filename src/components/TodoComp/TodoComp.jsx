@@ -4,7 +4,13 @@ import PLUS from "../../images/plus_.png";
 import COLLAPSE from "../../images/collapse.png";
 import Todo from "../Todo/Todo";
 
-const TodoComp = ({ name, onPlusClick, todos, onMoveTask }) => {
+const TodoComp = ({
+  name,
+  onPlusClick,
+  todos,
+  onMoveTask,
+  onCheckboxChange,
+}) => {
   const [collapseAll, setCollapseAll] = useState(false);
 
   const handleCollapseAllClick = () => {
@@ -33,6 +39,7 @@ const TodoComp = ({ name, onPlusClick, todos, onMoveTask }) => {
               sectionName={name}
               onMoveTask={onMoveTask}
               collapseAll={collapseAll}
+              onCheckboxChange={onCheckboxChange}
             />
           </div>
         ))}

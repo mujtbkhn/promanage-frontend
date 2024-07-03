@@ -1,7 +1,8 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/auth";
+// const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/auth";
+const BACKEND_URL = "http://localhost:3000/api/v1/auth";
 
 export const getUserFromToken = () => {
   const token = localStorage.getItem("token");
@@ -20,7 +21,6 @@ export const getUserFromToken1 = () => {
       userId: decoded.userId,
       name: decoded.name,
       email: decoded.email,
-      // Add other fields as needed
     };
   }
   return null;
@@ -63,7 +63,7 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const resetUser = async (newName, currentPassword, newPassword) => {
+export const resetUser = async (newName, currentPassword, newPassword, newEmail) => {
   const token = localStorage.getItem("token");
   try {
     const response = await axios.post(
@@ -72,6 +72,7 @@ export const resetUser = async (newName, currentPassword, newPassword) => {
         newName,
         currentPassword,
         newPassword,
+        newEmail
       },
       {
         headers: {
@@ -79,6 +80,7 @@ export const resetUser = async (newName, currentPassword, newPassword) => {
         },
       }
     );
+    console.log(response.data)
     return response.data;
   } catch (error) {
     if (error.response) {

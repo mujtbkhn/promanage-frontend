@@ -12,7 +12,7 @@ import {
 import toast from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
 
-const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
+const Todo = ({ todo, sectionName, onMoveTask, collapseAll, onCheckboxChange }) => {
   const [collapse, setCollapse] = useState(true);
   const [show, setShow] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -98,14 +98,14 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
     onMoveTask(todo._id, section);
   };
 
-  const handleCheckboxChange = (index) => {
-    const updatedChecklist = [...editedTodo.checklist];
-    updatedChecklist[index].completed = !updatedChecklist[index].completed;
-    setEditedTodo({
-      ...editedTodo,
-      checklist: updatedChecklist,
-    });
-  };
+  // const handleCheckboxChange = (index) => {
+  //   const updatedChecklist = [...editedTodo.checklist];
+  //   updatedChecklist[index].completed = !updatedChecklist[index].completed;
+  //   setEditedTodo({
+  //     ...editedTodo,
+  //     checklist: updatedChecklist,
+  //   });
+  // };
 
   const handleEditChecklistItem = (index, newText) => {
     const updatedChecklist = [...editedTodo.checklist];
@@ -162,23 +162,30 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
     { value: "DONE", label: "DONE" },
   ];
 
+  const handleCheckboxChange = (itemIndex, completed) => {
+    onCheckboxChange(todo._id, itemIndex, completed);
+  };
+
   const trimmedTitle =
     todo.title.length >= 20 ? todo.title.slice(0, 20) + "..." : todo.title;
   return (
     <div className="todo_main">
       <div className="todo_priority common">
-        <p>
-          <span
-            className={`priority__dot ${
-              todo.priority === "HIGH"
-                ? "high"
-                : todo.priority === "MODERATE"
-                ? "moderate"
-                : "low"
-            }`}
-          ></span>
-          {todo.priority.toUpperCase()} PRIORITY
-        </p>
+        <div style={{display: "flex", alignItems: "center", gap: "10px"}}>
+          <p>
+            <span
+              className={`priority__dot ${
+                todo.priority === "HIGH"
+                  ? "high"
+                  : todo.priority === "MODERATE"
+                  ? "moderate"
+                  : "low"
+              }`}
+            ></span>
+            {todo.priority.toUpperCase()} PRIORITY
+          </p>
+          <h3 className="color-assign">{todo.assignedTo.slice(0, 2).toUpperCase()}</h3>
+        </div>
         <img
           width="20"
           height="20"
@@ -233,7 +240,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
               <input
                 type="checkbox"
                 checked={item.completed}
-                onChange={() => handleCheckboxChange(index)}
+                onChange={(e) => handleCheckboxChange(index, e.target.checked)}
                 className="checklist__checkbox"
               />
               <input
@@ -312,7 +319,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
                   editedTodo.priority === "HIGH" ? "selected" : ""
                 }`}
                 onClick={() =>
-                  setEditedTodo({ ...editedTodo, priority: "high" })
+                  setEditedTodo({ ...editedTodo, priority: "HIGH" })
                 }
               >
                 <span className="priority__dot high" /> High Priority
@@ -322,7 +329,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
                   editedTodo.priority === "MODERATE" ? "selected" : ""
                 }`}
                 onClick={() =>
-                  setEditedTodo({ ...editedTodo, priority: "moderate" })
+                  setEditedTodo({ ...editedTodo, priority: "MODERATE" })
                 }
               >
                 <span className="priority__dot moderate" /> Moderate Priority
@@ -332,7 +339,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll }) => {
                   editedTodo.priority === "LOW" ? "selected" : ""
                 }`}
                 onClick={() =>
-                  setEditedTodo({ ...editedTodo, priority: "low" })
+                  setEditedTodo({ ...editedTodo, priority: "LOW" })
                 }
               >
                 <span className="priority__dot low" /> Low Priority

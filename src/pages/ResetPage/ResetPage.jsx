@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "./ResetPage.css";
 import { getUserFromToken, resetUser } from "../../apis/auth";
+import { useNavigate } from "react-router-dom";
 
 const ResetPage = () => {
-  const [userDetails, setUserDetails] = useState(null);
+  const [userDetails, setUserDetails] = useState("");
   const [name, setName] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [email, setEmail] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const user = getUserFromToken();
@@ -16,13 +20,21 @@ const ResetPage = () => {
 
   const updateUser = async () => {
     try {
-      console.log("before", userDetails);
-      const updatedUser = await resetUser(name, currentPassword, newPassword);
+      // console.log("before", userDetails);
+      await resetUser(name, currentPassword, newPassword, email);
+
+      // Refetch the updated user details
+      const updatedUser = getUserFromToken();
+
+      // Update userDetails and reset form fields
       setUserDetails(updatedUser);
       setName(updatedUser.name);
+      setEmail(updatedUser.email);
       setCurrentPassword("");
       setNewPassword("");
-      console.log("after", updatedUser);
+      localStorage.removeItem("token");
+      navigate("/login");
+      // console.log("after", updatedUser);
     } catch (error) {
       console.error(error);
     }
@@ -37,6 +49,12 @@ const ResetPage = () => {
           value={name}
           placeholder={userDetails?.name}
           onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="email"
+          value={email}
+          placeholder={userDetails?.email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
