@@ -10,6 +10,7 @@ const TodoComp = ({
   todos,
   onMoveTask,
   onCheckboxChange,
+  fetchTodos
 }) => {
   const [collapseAll, setCollapseAll] = useState(false);
 
@@ -40,6 +41,7 @@ const TodoComp = ({
               onMoveTask={onMoveTask}
               collapseAll={collapseAll}
               onCheckboxChange={onCheckboxChange}
+              fetchTodos={fetchTodos}
             />
           </div>
         ))}

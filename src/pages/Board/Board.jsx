@@ -40,34 +40,32 @@ const Board = () => {
     const fetchUserDetails = async () => {
       const user = await getUserFromToken();
       setUserDetails(user);
+      fetchTodos(selectedFilter); 
     };
     fetchUserDetails();
-
+  
     const onStorageChange = () => {
       fetchUserDetails();
     };
-
+  
     window.addEventListener("storage", onStorageChange);
-
+  
     return () => {
       window.removeEventListener("storage", onStorageChange);
     };
   }, []);
+  
 
   useEffect(() => {
-    fetchTodos(selectedFilter); // Fetch todos initially with default filter "today"
+    fetchTodos(selectedFilter); 
   }, [selectedFilter]);
-
-  useEffect(() => {
-    fetchTodos();
-  }, []);
-
+  
   useEffect(() => {
     allowed();
   }, []);
-
+  
   useEffect(() => {
-    // console.log("user details changed: ", userDetails);
+    
   }, [userDetails]);
 
   const allowed = async () => {
@@ -79,14 +77,14 @@ const Board = () => {
     }
   };
 
-  const fetchTodos = async () => {
-    try {
-      const data = await getTodos();
-      setTodos(data);
-    } catch (error) {
-      console.error("Error fetching todos:", error);
-    }
-  };
+const fetchTodos = async (filter) => {
+  try {
+    const data = await getTodos(filter);
+    setTodos(data);
+  } catch (error) {
+    console.error("Error fetching todos:", error);
+  }
+};
 
   const handleFilterChange = (e) => {
     setSelectedFilter(e.target.value); // Update selected filter on change
@@ -204,7 +202,7 @@ const Board = () => {
       );
   
       onCloseModal();
-      fetchTodos(); // Refresh the todos after adding a new one
+      fetchTodos(); 
     } catch (error) {
       console.error("Error creating todo:", error);
     }
@@ -304,6 +302,7 @@ const Board = () => {
           todos={todos.filter((todo) => todo.section === "BACKLOG")}
           onMoveTask={handleMoveTask}
           onCheckboxChange={handleCheckboxChange}
+          fetchTodos={fetchTodos}
         />
         <TodoComp
           name="TODO"
@@ -311,18 +310,21 @@ const Board = () => {
           todos={todos.filter((todo) => todo.section === "TODO")}
           onMoveTask={handleMoveTask}
           onCheckboxChange={handleCheckboxChange}
+          fetchTodos={fetchTodos}
         />
         <TodoComp
           name="IN PROGRESS"
           todos={todos.filter((todo) => todo.section === "IN PROGRESS")}
           onMoveTask={handleMoveTask}
           onCheckboxChange={handleCheckboxChange}
+          fetchTodos={fetchTodos}
         />
         <TodoComp
           name="DONE"
           todos={todos.filter((todo) => todo.section === "DONE")}
           onMoveTask={handleMoveTask}
           onCheckboxChange={handleCheckboxChange}
+          fetchTodos={fetchTodos}
         />
       </div>
       <Modal

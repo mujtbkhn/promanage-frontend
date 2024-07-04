@@ -20,6 +20,7 @@ const Todo = ({
   onMoveTask,
   collapseAll,
   onCheckboxChange,
+  fetchTodos,
 }) => {
   const [collapse, setCollapse] = useState(true);
   const [show, setShow] = useState(false);
@@ -37,8 +38,7 @@ const Todo = ({
     dueDate: todo.dueDate || null,
     section: todo.dueDate ? format(parseISO(todo.dueDate), "yyyy-MM-dd") : "",
   });
-  // console.log(todo, editedTodo)
-
+  
   useEffect(() => {
     if (editModalOpen && todo._id) {
       fetchTodoDetails(todo._id);
@@ -59,8 +59,7 @@ const Todo = ({
   const fetchTodoDetails = async (todoId) => {
     try {
       const response = await getTodoById(todoId);
-      const fetchedTodo = response; // Adjust according to your API response structure
-      // console.log(fetchedTodo);
+      const fetchedTodo = response; 
       setIsCreator(fetchedTodo?.isCreator);
       setIsAssignee(fetchedTodo?.isAssignee);
       // console.log(isCreator)
@@ -89,11 +88,12 @@ const Todo = ({
     setEditModalOpen(false);
     // Optionally reset editedTodo state or manage it accordingly
   };
+
   const handleUpdateTodo = async () => {
     try {
       await updateTodo(todo._id, editedTodo);
       closeEditModal();
-      await getTodos("week");
+      fetchTodos();
     } catch (error) {
       console.error("Error updating todo:", error);
     }
@@ -149,7 +149,7 @@ const Todo = ({
     try {
       await deleteTodoById(todo._id);
       closeDeleteModal();
-      await getTodos();
+      fetchTodos();
     } catch (error) {
       console.error("Error deleting todo:", error);
     }
