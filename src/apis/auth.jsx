@@ -1,8 +1,8 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-// const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/auth";
-const BACKEND_URL = "http://localhost:3000/api/v1/auth";
+const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/auth";
+// const BACKEND_URL = "http://localhost:3000/api/v1/auth";
 
 export const getUserFromToken = () => {
   const token = localStorage.getItem("token");
@@ -63,7 +63,12 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const resetUser = async (newName, currentPassword, newPassword, newEmail) => {
+export const resetUser = async (
+  newName,
+  currentPassword,
+  newPassword,
+  newEmail
+) => {
   const token = localStorage.getItem("token");
   try {
     const response = await axios.post(
@@ -72,7 +77,7 @@ export const resetUser = async (newName, currentPassword, newPassword, newEmail)
         newName,
         currentPassword,
         newPassword,
-        newEmail
+        newEmail,
       },
       {
         headers: {
@@ -80,7 +85,7 @@ export const resetUser = async (newName, currentPassword, newPassword, newEmail)
         },
       }
     );
-    console.log(response.data)
+    // console.log(response.data);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -93,7 +98,7 @@ export const resetUser = async (newName, currentPassword, newPassword, newEmail)
 
 export const addUserByEmail = async (email) => {
   const user = getUserFromToken1();
-  console.log(user.userId);
+  // console.log(user.userId);
   const token = localStorage.getItem("token");
   try {
     const response = await axios.post(

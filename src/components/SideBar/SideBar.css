@@ -19,23 +19,38 @@ body {
   padding: 10px;
   cursor: pointer;
 }
- .flex.active {
+.flex.active {
   background-color: #ecf4fd;
 }
 /* .flex:active {
   background-color: #ecf4fd;
 } */
- .modal__actions{
+.modal__actions {
   display: flex;
   flex-direction: column;
   gap: 1rem;
- }
-.modal__actions > button{
-  width: 100%;
+}
+.modal__actions > button {
+  border: none;
+  border-radius: 1rem;
+  padding: 0.725rem;
+  background-color: #17a2b8;
+  color: white;
+  cursor: pointer;
 }
 .custom-modal {
   border-radius: 15px;
 }
-.modal__button.save:hover{
-  background-color: #17A2B8;
+.modal__button.cancel {
+  background-color: white;
+  border: 1px solid #17a2b8;
+  color: #17a2b8;
+}
+.modal__button.save:hover {
+  border: none;
+  border-radius: 1rem;
+  padding: 0.725rem;
+  background-color: #17a2b8;
+  color: white;
+  cursor: pointer;
 }

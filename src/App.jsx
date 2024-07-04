@@ -1,12 +1,4 @@
 import { BrowserRouter, Routes, Route, useParams } from "react-router-dom";
-// import RegisterPage from "./pages/RegisterPage/RegisterPage";
-// import LoginPage from "./pages/LoginPage/LoginPage";
-// import Analytics from "./pages/Analytics/Analytics";
-// import ResetPage from "./pages/ResetPage/ResetPage";
-// import Board from "./pages/Board/Board";
-// import Layout from "./components/Layout/Layout";
-// import Test from "./components/Test/Test";
-// import ViewTodo from "./pages/ViewTodo/ViewTodo";
 import { Suspense, lazy } from "react";
 
 const RegisterPage = lazy(() => import("./pages/RegisterPage/RegisterPage"));

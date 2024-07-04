@@ -120,8 +120,6 @@ select {
 
 .modal__actions__button {
   display: flex;
-  /* flex-direction: row;
-  justify-content: flex-end; */
   gap: 10px;
 }
 
@@ -190,10 +188,6 @@ select {
 .allowed-emails-list div {
   padding: 5px;
 }
-
-/* .allowed-emails-list div:hover {
-  background-color: #f1f1f1;
-} */
 
 .allowed-emails-list p {
   margin: 0;

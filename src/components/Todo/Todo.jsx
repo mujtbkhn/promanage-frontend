@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { format, parseISO } from "date-fns";
 import Modal from "react-responsive-modal";
+import Delete from "../../images/Delete.png";
 import "react-responsive-modal/styles.css";
 import "./Todo.css";
 import {
@@ -11,12 +12,23 @@ import {
 } from "../../apis/todo";
 import toast from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
+import { getUserByEmail } from "../../apis/auth";
 
-const Todo = ({ todo, sectionName, onMoveTask, collapseAll, onCheckboxChange }) => {
+const Todo = ({
+  todo,
+  sectionName,
+  onMoveTask,
+  collapseAll,
+  onCheckboxChange,
+}) => {
   const [collapse, setCollapse] = useState(true);
   const [show, setShow] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isAssignDropdownOpen, setIsAssignDropdownOpen] = useState(false);
+  const [allowedEmails, setAllowedEmails] = useState(null);
+  const [isCreator, setIsCreator] = useState(false);
+  const [isAssignee, setIsAssignee] = useState(false);
   const [editedTodo, setEditedTodo] = useState({
     title: todo.title || "",
     priority: todo.priority || "",
@@ -25,6 +37,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll, onCheckboxChange }) 
     dueDate: todo.dueDate || null,
     section: todo.dueDate ? format(parseISO(todo.dueDate), "yyyy-MM-dd") : "",
   });
+  // console.log(todo, editedTodo)
 
   useEffect(() => {
     if (editModalOpen && todo._id) {
@@ -39,21 +52,29 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll, onCheckboxChange }) 
     }
   }, [collapseAll]);
 
+  useEffect(() => {
+    allowed();
+  }, []);
+
   const fetchTodoDetails = async (todoId) => {
     try {
       const response = await getTodoById(todoId);
       const fetchedTodo = response; // Adjust according to your API response structure
+      // console.log(fetchedTodo);
+      setIsCreator(fetchedTodo?.isCreator);
+      setIsAssignee(fetchedTodo?.isAssignee);
+      // console.log(isCreator)
       setEditedTodo({
-        title: fetchedTodo?.title || "",
-        priority: fetchedTodo?.priority || "",
-        assignedTo: fetchedTodo?.assignedTo || "",
-        checklist: fetchedTodo?.checklist || [],
-        dueDate: fetchedTodo.dueDate
-          ? format(parseISO(fetchedTodo.dueDate), "yyyy-MM-dd")
+        title: fetchedTodo.todo?.title || "",
+        priority: fetchedTodo.todo?.priority || "",
+        assignedTo: fetchedTodo.todo?.assignedTo || "",
+        checklist: fetchedTodo.todo?.checklist || [],
+        dueDate: fetchedTodo.todo.dueDate
+          ? format(parseISO(fetchedTodo.todo.dueDate), "yyyy-MM-dd")
           : "",
-        section: fetchedTodo?.section || "",
+        section: fetchedTodo.todo?.section || "",
       });
-      console.log(editedTodo);
+      // console.log(editedTodo);
     } catch (error) {
       console.error("Error fetching todo:", error);
     }
@@ -72,7 +93,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll, onCheckboxChange }) 
     try {
       await updateTodo(todo._id, editedTodo);
       closeEditModal();
-      await getTodos(); // Optionally, refresh todos after update
+      await getTodos("week");
     } catch (error) {
       console.error("Error updating todo:", error);
     }
@@ -138,7 +159,7 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll, onCheckboxChange }) 
     try {
       const storyURL = `${window.location.origin}/view/${todo._id}`;
       await navigator.clipboard.writeText(storyURL);
-      console.log(storyURL);
+      // console.log(storyURL);
       toast.success("Link Copied", {
         style: {
           position: "relative",
@@ -166,12 +187,31 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll, onCheckboxChange }) 
     onCheckboxChange(todo._id, itemIndex, completed);
   };
 
+  const handleRemoveChecklistItem = (index) => {
+    const updatedChecklist = editedTodo.checklist.filter((_, i) => i !== index);
+    setEditedTodo({ ...editedTodo, checklist: updatedChecklist });
+  };
+
+  const allowed = async () => {
+    try {
+      const data = await getUserByEmail();
+      setAllowedEmails(data.allowedEmails);
+    } catch (error) {
+      console.error("Error Fetching Allowed Emails", error);
+    }
+  };
+
+  const toggleAssignDropdown = () => {
+    setIsAssignDropdownOpen(!isAssignDropdownOpen);
+  };
+
   const trimmedTitle =
     todo.title.length >= 20 ? todo.title.slice(0, 20) + "..." : todo.title;
+
   return (
     <div className="todo_main">
       <div className="todo_priority common">
-        <div style={{display: "flex", alignItems: "center", gap: "10px"}}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <p>
             <span
               className={`priority__dot ${
@@ -184,7 +224,13 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll, onCheckboxChange }) 
             ></span>
             {todo.priority.toUpperCase()} PRIORITY
           </p>
-          <h3 className="color-assign">{todo.assignedTo.slice(0, 2).toUpperCase()}</h3>
+          {todo.assignedTo ? (
+            <h3 className="color-assign">
+              {todo.assignedTo?.slice(0, 2).toUpperCase()}
+            </h3>
+          ) : (
+            ""
+          )}
         </div>
         <img
           width="20"
@@ -347,18 +393,52 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll, onCheckboxChange }) 
             </div>
           </div>
 
-          <div className="modal__section">
+          <div className="todo_assign">
             <h3>Assign To</h3>
-            <input
-              type="text"
-              value={editedTodo.assignedTo}
-              onChange={(e) =>
-                setEditedTodo({ ...editedTodo, assignedTo: e.target.value })
-              }
-              placeholder="Add an assignee"
-              className="modal__input"
-            />
+            <div className="assign__dropdown">
+              <input
+                type="text"
+                placeholder="Add an assignee"
+                className="modal__input"
+                value={editedTodo.assignedTo}
+                onFocus={toggleAssignDropdown}
+              />
+
+              {isCreator && isAssignDropdownOpen && (
+                <div className="allowed-emails-list">
+                  {allowedEmails?.map((email, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                        alignItems: "center",
+                        padding: "5px 0",
+                        borderBottom: "1px solid #ccc",
+                      }}
+                    >
+                      <p className="initials">
+                        {email.email.slice(0, 2).toUpperCase()}
+                      </p>
+                      <p>{email.email}</p>
+                      <button
+                        onClick={() => {
+                          setEditedTodo({
+                            ...editedTodo,
+                            assignedTo: email.email,
+                          });
+                          toggleAssignDropdown();
+                        }}
+                      >
+                        Assign
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
+
           <div className="modal__section">
             <h3>Checklist</h3>
             {editedTodo?.checklist?.map((item, index) => (
@@ -380,8 +460,16 @@ const Todo = ({ todo, sectionName, onMoveTask, collapseAll, onCheckboxChange }) 
                       checklist: updatedChecklist,
                     });
                   }}
-                  //   placeholder="Checklist item"
                   className="checklist__input"
+                />
+                <img
+                  onClick={() => {
+                    handleRemoveChecklistItem(index);
+                    // handleUpdateTodo(); // Persist changes
+                  }}
+                  src={Delete}
+                  alt="delete"
+                  className="checklist__delete"
                 />
               </div>
             ))}

@@ -9,6 +9,7 @@ const ResetPage = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
@@ -19,8 +20,8 @@ const ResetPage = () => {
   }, []);
 
   const updateUser = async () => {
+    setError(""); // Reset error state
     try {
-      // console.log("before", userDetails);
       await resetUser(name, currentPassword, newPassword, email);
 
       // Refetch the updated user details
@@ -34,9 +35,8 @@ const ResetPage = () => {
       setNewPassword("");
       localStorage.removeItem("token");
       navigate("/login");
-      // console.log("after", updatedUser);
     } catch (error) {
-      console.error(error);
+      setError(error.message || "An error occurred. Please try again.");
     }
   };
 
@@ -68,6 +68,7 @@ const ResetPage = () => {
           placeholder="New Password"
           onChange={(e) => setNewPassword(e.target.value)}
         />
+        {error && <p className="error">{error}</p>}
         <button onClick={updateUser}>
           <span>Update</span>
         </button>

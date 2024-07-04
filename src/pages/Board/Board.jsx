@@ -17,7 +17,6 @@ import {
   getTodos,
   moveTask,
   updateChecklistItem,
-  updateTodo,
 } from "../../apis/todo";
 
 const Board = () => {
@@ -63,16 +62,12 @@ const Board = () => {
     fetchTodos();
   }, []);
 
-  // useEffect(() => {
-  //   setCheckedCount(checklist.filter((item) => item.completed).length);
-  // }, [checklist]);
-
   useEffect(() => {
     allowed();
   }, []);
 
   useEffect(() => {
-    console.log("user details changed: ", userDetails);
+    // console.log("user details changed: ", userDetails);
   }, [userDetails]);
 
   const allowed = async () => {
@@ -132,20 +127,23 @@ const Board = () => {
     setSelectedPriority(priority);
   };
 
-  const updateTodoBackend = async (todoId, updatedTodo) => {
-    try {
-      await updateTodo(todoId, updatedTodo); // Utilize your existing updateTodo API function
-      console.log("Todo updated successfully in backend");
-      fetchTodos(); // Refresh todos after updating
-    } catch (error) {
-      console.error("Error updating todo in backend:", error);
-    }
-  };
-
   const handleCheckboxChange = async (todoId, itemIndex, completed) => {
     try {
       await updateChecklistItem(todoId, itemIndex, completed);
-      fetchTodos(); // Refresh todos after updating
+      const updatedTodos = todos.map(todo => {
+        if (todo._id === todoId) {
+          const updatedChecklist = todo.checklist.map((item, index) => {
+            if (index === itemIndex) {
+              return { ...item, completed };
+            }
+            return item;
+          });
+          return { ...todo, checklist: updatedChecklist };
+        }
+        return todo;
+      });
+      setTodos(updatedTodos);
+      // fetchTodos()
     } catch (error) {
       console.error("Error updating checklist item:", error);
     }
@@ -185,21 +183,32 @@ const Board = () => {
       if (!validateForm()) {
         return;
       }
-      const response = await getCreateTodo(
+      
+      const todoData = {
         title,
-        selectedPriority,
-        assignedTo,
+        priority: selectedPriority,
         checklist,
-        dueDate,
-        "TODO"
+        section: "TODO"
+      };
+  
+      if (assignedTo) {
+        todoData.assignedTo = assignedTo;
+      }
+  
+      if (dueDate) {
+        todoData.dueDate = dueDate;
+      }
+  
+      const response = await getCreateTodo(
+        todoData
       );
-      console.log("Todo created successfully:", response);
+  
       onCloseModal();
       fetchTodos(); // Refresh the todos after adding a new one
     } catch (error) {
       console.error("Error creating todo:", error);
     }
-  };
+  };  
 
   const handleMoveTask = async (todoId, section) => {
     try {
@@ -214,7 +223,7 @@ const Board = () => {
     try {
       await addUserByEmail(email); // Ensure addUserByEmail is correctly defined and used here
       await getUserByEmail();
-      console.log("Email added successfully");
+      // console.log("Email added successfully");
       setAddPeopleMessage(`Added ${email}`); // Update the message
       // handleCloseAddPeopleModal();
     } catch (error) {
@@ -250,7 +259,7 @@ const Board = () => {
 
   const handleAssignEmail = (email) => {
     if (allowedEmails) {
-      console.log("Assigned to:", email); // Confirm email is correctly assigned
+      // console.log("Assigned to:", email); // Confirm email is correctly assigned
       setAssignedTo(email);
       setIsEmailListVisible(false); // Close email list after assignment
     }
@@ -422,7 +431,7 @@ const Board = () => {
                     type="checkbox"
                     checked={item.completed}
                     onChange={() =>
-                      handleCheckboxChange(todo.id, index, !item.completed)
+                      handleCheckboxChange(item._id, index, !item.completed)
                     }
                     className="checklist__checkbox"
                   />

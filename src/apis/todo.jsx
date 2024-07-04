@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/todo";
-const BACKEND_URL = "http://localhost:3000/api/v1/todo";
+const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/todo";
+// const BACKEND_URL = "http://localhost:3000/api/v1/todo";
 
 const token = localStorage.getItem("token");
 
@@ -37,32 +37,13 @@ export const getAnalytics = async () => {
   }
 };
 
-export const getCreateTodo = async (
-  title,
-  priority,
-  assignedTo,
-  checklist,
-  dueDate,
-  section
-) => {
+export const getCreateTodo = async (todoData) => {
   try {
-    const response = await axios.post(
-      `${BACKEND_URL}/create`,
-      {
-        title,
-        priority,
-        assignedTo,
-        checklist,
-        dueDate,
-        section,
+    const response = await axios.post(`${BACKEND_URL}/create`, todoData, {
+      headers: {
+        Authorization: `${token}`,
       },
-      {
-        headers: {
-          Authorization: `${token}`,
-        },
-      }
-    );
-
+    });
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -72,7 +53,21 @@ export const getCreateTodo = async (
 
 export const getTodoById = async (todoId) => {
   try {
-    const response = await axios.get(`${BACKEND_URL}/get/${todoId}`);
+    const response = await axios.get(`${BACKEND_URL}/get/${todoId}`, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+    // console.log(response.data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const viewTodoById = async (todoId) => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/view/${todoId}`);
     // console.log(response.data);
     return response.data;
   } catch (error) {
@@ -105,7 +100,7 @@ export const updateTodo = async (todoId, updatedTodo) => {
         },
       }
     );
-    console.log("Todo updated successfully:", response.data);
+    // console.log("Todo updated successfully:", response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -114,19 +109,19 @@ export const updateTodo = async (todoId, updatedTodo) => {
 
 export const updateChecklistItem = async (todoId, itemIndex, completed) => {
   try {
-      const response = await axios.patch(
-          `${BACKEND_URL}/checklist/${todoId}/${itemIndex}`,
-          { completed },
-          {
-              headers: {
-                  Authorization: `${token}`,
-              },
-          }
-      );
-      console.log("Checklist item updated successfully:", response.data);
-      return response.data;
+    const response = await axios.patch(
+      `${BACKEND_URL}/checklist/${todoId}/${itemIndex}`,
+      { completed },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    );
+    // console.log("Checklist item updated successfully:", response.data);
+    return response.data;
   } catch (error) {
-      throw error;
+    throw error;
   }
 };
 
@@ -141,7 +136,7 @@ export const moveTask = async (todoId, section) => {
         },
       }
     );
-    console.log("Task moved successfully:", response.data);
+    // console.log("Task moved successfully:", response.data);
     return response.data;
   } catch (error) {
     throw error;

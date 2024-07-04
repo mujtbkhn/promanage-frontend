@@ -23,6 +23,7 @@ ul {
 }
 ul{
   max-height: 500px;
+  padding-right: 10px;
 }
 .common {
   display: flex;
@@ -62,6 +63,7 @@ ul{
 .todo_checklist {
 }
 .todo_button {
+  margin-top: 10px;
 }
 .todo_main button {
   border-radius: 1rem;

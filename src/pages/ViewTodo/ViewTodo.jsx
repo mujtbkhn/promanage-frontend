@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getTodoById } from "../../apis/todo";
+import { viewTodoById } from "../../apis/todo";
 import LOGOO from "../../images/logoo.png";
 import { format, parseISO } from "date-fns";
 import "./ViewTodo.css";
@@ -12,10 +12,10 @@ const ViewTodo = ({ todoId }) => {
 
   const fetchTodoDetails = async () => {
     try {
-      const response = await getTodoById(todoId);
+      const response = await viewTodoById(todoId);
       const fetchedTodo = response; // Adjust according to your API response structure
 
-      console.log(fetchedTodo);
+      // console.log(fetchedTodo);
       setTodo(fetchedTodo);
     } catch (error) {
       console.error("Error fetching todo:", error);
@@ -24,18 +24,11 @@ const ViewTodo = ({ todoId }) => {
   useEffect(() => {
     fetchTodoDetails();
   }, []);
-  // console.log(todoId)
 
   const formatDate = (dateString) => {
     if (!dateString) return ""; // Handle case where dateString is undefined or null
     const date = parseISO(dateString);
     return format(date, "MMM do");
-  };
-
-  const isDueDatePast = (dateString) => {
-    const today = new Date();
-    const dueDate = new Date(dateString);
-    return dueDate < today;
   };
 
   return (
@@ -80,29 +73,22 @@ const ViewTodo = ({ todoId }) => {
             </div>
             <div style={{ cursor: "pointer" }}></div>
           </div>
-          {/* <div style={{display: 'flex', justifyContent: "flex-start", margin: "0 auto"}}> */}
           <ul style={{ margin: "0 auto" }}>
             {todo.checklist?.map((item, index) => (
               <div key={index} className="checklist__item">
                 <input
                   type="checkbox"
                   checked={item.completed}
-                  onChange={() => handleCheckboxChange(index)}
                   className="checklist__checkbox"
                 />
                 <input
                   type="text"
                   value={item.item}
-                  onChange={(e) =>
-                    handleEditChecklistItem(index, e.target.value)
-                  }
-                  // placeholder="Checklist item"
                   className="checklist__input"
                 />
               </div>
             ))}
           </ul>
-          {/* </div> */}
           {todo.dueDate && (
             <div
               style={{
@@ -113,12 +99,7 @@ const ViewTodo = ({ todoId }) => {
             >
               <h5>DUE DATE</h5>
               <button
-                style={{
-                  backgroundColor: "red",
-
-                  color: "white",
-                  marginLeft: "10px",
-                }}
+                className="dueDate__button"
               >
                 {formatDate(todo?.dueDate)}
               </button>

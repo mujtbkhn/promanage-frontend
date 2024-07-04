@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./SideBar.css";
-import ANALYTICS from "../../images/analytics.png";
-import BOARD from "../../images/board.png";
 import LOGOO from "../../images/logoo.png";
-import SETTINGS from "../../images/settings.png";
 import LOGOUT from "../../images/Logout.png";
 import Modal from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
@@ -92,7 +89,6 @@ const SideBar = () => {
           </div>
         </div>
       </div>
-      {/* Modal for logout confirmation */}
       <Modal open={logoutModalOpen} onClose={closeLogoutModal} center classNames={{ modal: 'custom-modal' }}>
         <div className="modal__content">
           <h2>Are you sure you want to logout?</h2>
@@ -100,7 +96,7 @@ const SideBar = () => {
             <button className="modal__button save" onClick={handleLogout}>
               <span> Yes, Logout</span>
             </button>
-            <button className="modal__button" onClick={closeLogoutModal}>
+            <button className="modal__button cancel" onClick={closeLogoutModal}>
               <span>Cancel</span>
             </button>
           </div>

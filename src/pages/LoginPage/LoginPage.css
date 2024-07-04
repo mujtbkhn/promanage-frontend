@@ -2,6 +2,10 @@
   display: flex;
   height: 100vh;
 }
+html, body{
+  padding: 0;
+  margin: 0;
+}
 
 .login__left {
   flex: 1;
@@ -28,16 +32,17 @@
   gap: 1rem;
 }
 
-input, button {
+.login__container input,
+button {
   padding: 10px;
   border-radius: 10px;
 }
 
-input {
+.login__container input {
   border: 1px solid gray;
 }
 
-button {
+.login__container button {
   border: none;
   border-radius: 1rem;
   background-color: #17a2b8;
@@ -45,7 +50,7 @@ button {
   cursor: pointer;
 }
 
-button span {
+.login__container button span {
   font-size: 1rem;
 }
 
@@ -53,7 +58,7 @@ button span {
   color: red;
 }
 
-p {
+.login__container p {
   text-align: center;
 }
 

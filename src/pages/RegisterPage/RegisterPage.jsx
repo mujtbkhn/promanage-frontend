@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./RegisterPage.css";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../apis/auth";
-import ART from "../../images/Art.png"
+import ART from "../../images/Art.png";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -32,13 +32,19 @@ const RegisterPage = () => {
 
     try {
       const data = await registerUser(name, email, password);
-      console.log(data);
+      // console.log(data);
       navigate("/");
     } catch (error) {
-      if (error.response && error.response.data.errors) {
-        setErrors(error.response.data.errors);
+      if (error.response) {
+        if (error.response.data.message === "Email already exists") {
+          setErrors({ email: "Email already registered" });
+        } else {
+          setErrors({ general: error.response.data.message });
+        }
       } else {
-        console.error(error);
+        setErrors({
+          general: "An unexpected error occurred. Please try again later.",
+        });
       }
     }
   };
