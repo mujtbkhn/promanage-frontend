@@ -115,6 +115,7 @@ const Board = () => {
   const handleCloseAddPeopleModal = () => {
     setOpenAddPeopleModal(false);
     setAddPeopleMessage("");
+    window.location.reload()
   };
 
   const resetFormFields = () => {
@@ -226,6 +227,7 @@ const Board = () => {
       await getUserByEmail();
       setAddPeopleMessage(`Added ${email}`);
       setAddPeopleError(""); // Clear any previous error message
+
     } catch (error) {
       setAddPeopleError(error?.message || "Error adding people");
       console.error("Error adding people", error);
