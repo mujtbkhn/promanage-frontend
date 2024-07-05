@@ -7,7 +7,6 @@ const Analytics = lazy(() => import("./pages/Analytics/Analytics"));
 const ResetPage = lazy(() => import("./pages/ResetPage/ResetPage"));
 const Board = lazy(() => import("./pages/Board/Board"));
 const Layout = lazy(() => import("./components/Layout/Layout"));
-const Test = lazy(() => import("./components/Test/Test"));
 const ViewTodo = lazy(() => import("./pages/ViewTodo/ViewTodo"));
 
 import { Toaster } from "react-hot-toast";
@@ -22,7 +21,6 @@ function App() {
           <Routes>
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/test" element={<Test />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<ProtectedRoute element={Board} />} />
               <Route
