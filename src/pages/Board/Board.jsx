@@ -1,4 +1,3 @@
-// Board Component
 import React, { useEffect, useState } from "react";
 import Modal from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
@@ -28,45 +27,47 @@ const Board = () => {
   const [dueDate, setDueDate] = useState(null);
   const [userDetails, setUserDetails] = useState("");
   const [todos, setTodos] = useState([]);
-  const [selectedFilter, setSelectedFilter] = useState("week"); // State for selected filter
+  const [selectedFilter, setSelectedFilter] = useState("week");
   const [formErrors, setFormErrors] = useState({});
-  const [openAddPeopleModal, setOpenAddPeopleModal] = useState(false); // State for Add People modal
+  const [openAddPeopleModal, setOpenAddPeopleModal] = useState(false);
   const [addPeople, setAddPeople] = useState("");
   const [allowedEmails, setAllowedEmails] = useState(null);
   const [addPeopleMessage, setAddPeopleMessage] = useState("");
+  const [addPeopleError, setAddPeopleError] = useState("");
   const [isEmailListVisible, setIsEmailListVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       const user = await getUserFromToken();
       setUserDetails(user);
-      fetchTodos(selectedFilter); 
+      fetchTodos(selectedFilter);
     };
     fetchUserDetails();
-  
+
     const onStorageChange = () => {
       fetchUserDetails();
     };
-  
+
     window.addEventListener("storage", onStorageChange);
-  
+
     return () => {
       window.removeEventListener("storage", onStorageChange);
     };
   }, []);
-  
 
   useEffect(() => {
-    fetchTodos(selectedFilter); 
+    fetchTodos(selectedFilter);
   }, [selectedFilter]);
-  
+
   useEffect(() => {
     allowed();
   }, []);
-  
   useEffect(() => {
-    
-  }, [userDetails]);
+    console.log("assigned to :", assignedTo);
+  }, [assignedTo]);
+
+  useEffect(() => {}, [userDetails]);
 
   const allowed = async () => {
     try {
@@ -77,17 +78,20 @@ const Board = () => {
     }
   };
 
-const fetchTodos = async (filter) => {
-  try {
-    const data = await getTodos(filter);
-    setTodos(data);
-  } catch (error) {
-    console.error("Error fetching todos:", error);
-  }
-};
+  const fetchTodos = async (filter) => {
+    setIsLoading(true);
+    try {
+      const data = await getTodos(filter);
+      setTodos(data);
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleFilterChange = (e) => {
-    setSelectedFilter(e.target.value); // Update selected filter on change
+    setSelectedFilter(e.target.value);
   };
 
   const handleInputFocus = () => {
@@ -95,7 +99,7 @@ const fetchTodos = async (filter) => {
   };
 
   const handleInputBlur = () => {
-    setTimeout(() => setIsEmailListVisible(false), 200); // Delay to allow click on Assign button
+    setTimeout(() => setIsEmailListVisible(false), 200);
   };
 
   const onOpenModal = () => setOpen(true);
@@ -128,7 +132,7 @@ const fetchTodos = async (filter) => {
   const handleCheckboxChange = async (todoId, itemIndex, completed) => {
     try {
       await updateChecklistItem(todoId, itemIndex, completed);
-      const updatedTodos = todos.map(todo => {
+      const updatedTodos = todos.map((todo) => {
         if (todo._id === todoId) {
           const updatedChecklist = todo.checklist.map((item, index) => {
             if (index === itemIndex) {
@@ -181,37 +185,36 @@ const fetchTodos = async (filter) => {
       if (!validateForm()) {
         return;
       }
-      
+
       const todoData = {
         title,
         priority: selectedPriority,
         checklist,
-        section: "TODO"
+        section: "TODO",
+        dueDate: dueDate ? dueDate.toISOString() : null,
       };
-  
+
       if (assignedTo) {
         todoData.assignedTo = assignedTo;
       }
-  
+
       if (dueDate) {
         todoData.dueDate = dueDate;
       }
-  
-      const response = await getCreateTodo(
-        todoData
-      );
-  
+
+      await getCreateTodo(todoData);
+
       onCloseModal();
-      fetchTodos(); 
+      fetchTodos();
     } catch (error) {
       console.error("Error creating todo:", error);
     }
-  };  
+  };
 
   const handleMoveTask = async (todoId, section) => {
     try {
-      await moveTask(todoId, section); // Use moveTask instead of updateTodo
-      fetchTodos(); // Refresh todos after moving
+      await moveTask(todoId, section);
+      fetchTodos();
     } catch (error) {
       console.error("Error moving task:", error);
     }
@@ -219,17 +222,25 @@ const fetchTodos = async (filter) => {
 
   const handleAddPeople = async (email) => {
     try {
-      await addUserByEmail(email); // Ensure addUserByEmail is correctly defined and used here
+      await addUserByEmail(email);
       await getUserByEmail();
-      // console.log("Email added successfully");
-      setAddPeopleMessage(`Added ${email}`); // Update the message
-      // handleCloseAddPeopleModal();
+      setAddPeopleMessage(`Added ${email}`);
+      setAddPeopleError(""); // Clear any previous error message
     } catch (error) {
+      setAddPeopleError(error?.message || "Error adding people");
       console.error("Error adding people", error);
     }
   };
 
   const checkedCount = checklist.filter((item) => item.completed).length;
+
+  const formatDate = (date) => {
+    const day = date.getDate();
+    const month = date.toLocaleString("default", { month: "short" });
+    const year = date.getFullYear();
+    const daySuffix = getDaySuffix(day);
+    return `${day}${daySuffix} ${month}, ${year}`;
+  };
 
   const getDaySuffix = (day) => {
     if (day > 3 && day < 21) return "th";
@@ -245,22 +256,12 @@ const fetchTodos = async (filter) => {
     }
   };
 
-  const formatDate = (date) => {
-    const day = date.getDate();
-    const month = date.toLocaleString("default", { month: "short" });
-    const year = date.getFullYear();
-    const daySuffix = getDaySuffix(day);
-    return `${day}${daySuffix} ${month}, ${year}`;
-  };
-
+  // Example usage
   const date = formatDate(new Date());
 
   const handleAssignEmail = (email) => {
-    if (allowedEmails) {
-      // console.log("Assigned to:", email); // Confirm email is correctly assigned
-      setAssignedTo(email);
-      setIsEmailListVisible(false); // Close email list after assignment
-    }
+    setAssignedTo(email);
+    // setIsEmailListVisible(false);
   };
 
   return (
@@ -303,6 +304,7 @@ const fetchTodos = async (filter) => {
           onMoveTask={handleMoveTask}
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
+          isLoading={isLoading}
         />
         <TodoComp
           name="TODO"
@@ -311,6 +313,8 @@ const fetchTodos = async (filter) => {
           onMoveTask={handleMoveTask}
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
+          isLoading={isLoading}
+          dueDate={dueDate ? formatDate(new Date(dueDate)) : "No Due Date"}
         />
         <TodoComp
           name="IN PROGRESS"
@@ -318,6 +322,7 @@ const fetchTodos = async (filter) => {
           onMoveTask={handleMoveTask}
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
+          isLoading={isLoading}
         />
         <TodoComp
           name="DONE"
@@ -325,6 +330,7 @@ const fetchTodos = async (filter) => {
           onMoveTask={handleMoveTask}
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
+          isLoading={isLoading}
         />
       </div>
       <Modal
@@ -391,7 +397,7 @@ const fetchTodos = async (filter) => {
               value={assignedTo}
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
-              onChange={(e) => setAssignedTo(e.target.value)} // Add onChange handler to update assignedTo state
+              // readOnly
             />
             {isEmailListVisible && (
               <div className="allowed-emails-list">
@@ -409,12 +415,10 @@ const fetchTodos = async (filter) => {
                     <p className="initials">
                       {email.email.slice(0, 2).toUpperCase()}
                     </p>
-                    <p>{email.email}</p>{" "}
-                    {/* Update to display email correctly */}
+                    <p>{email.email}</p>
                     <button onClick={() => handleAssignEmail(email.email)}>
                       Assign
-                    </button>{" "}
-                    {/* Pass email.email as argument */}
+                    </button>
                   </div>
                 ))}
               </div>
@@ -468,6 +472,7 @@ const fetchTodos = async (filter) => {
               onChange={(date) => setDueDate(date)}
               placeholderText="Select Due Date"
               className="due__date"
+              dateFormat="MMMM d, yyyy"
             />
             <div className="modal__actions__button">
               <button
@@ -502,10 +507,10 @@ const fetchTodos = async (filter) => {
                 className="modal__input"
                 onChange={(e) => setAddPeople(e.target.value)}
               />
+              {addPeopleError && <p className="error">{addPeopleError}</p>}
             </>
           )}
           {addPeopleMessage && <p>{addPeopleMessage}</p>}{" "}
-          {/* Render the message */}
           <div className="modal__actions">
             <button
               className="modal__button save"

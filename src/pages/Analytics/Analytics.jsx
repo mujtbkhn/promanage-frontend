@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AnalyticsComp from "../../components/AnalyticsComp/AnalyticsComp";
 import { getAnalytics } from "../../apis/todo";
-import "./Analytics.css"; // Make sure to import the CSS file
+import "./Analytics.css"; 
 
 const Analytics = () => {
   const [analytics, setAnalytics] = useState([]);
@@ -10,8 +10,7 @@ const Analytics = () => {
     const fetchAnalytics = async () => {
       try {
         const data = await getAnalytics();
-        // console.log("Analytics data:", data); // Log the data to inspect its structure
-        const analyticsArray = Object.entries(data); // Convert the object to an array of key-value pairs
+        const analyticsArray = Object.entries(data); 
         setAnalytics(analyticsArray);
       } catch (err) {
         console.log(err);

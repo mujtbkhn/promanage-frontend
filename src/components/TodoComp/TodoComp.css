@@ -1,20 +1,20 @@
 .todo__main {
-  height: 100%; /* Ensure the TodoComp container takes full height */
+  height: 100%;
   margin: 1rem;
   background-color: #eef2f5;
   width: 370px;
   border-radius: 1rem;
-  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-y: auto;
 }
 
-.todo__top{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1rem;
+.todo__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem;
 }
-.icons{
-    display: flex;
-    gap: 1.5rem;
-    cursor: pointer;
+.icons {
+  display: flex;
+  gap: 1.5rem;
+  cursor: pointer;
 }

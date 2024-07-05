@@ -12,8 +12,7 @@ const LoginPage = () => {
 
   const getLoggedInUser = async () => {
     try {
-      const data = await loginUser(email, password);
-      // console.log(data);
+      await loginUser(email, password);
       navigate("/");
     } catch (error) {
       setError(error.message || "Login failed. Please try again.");

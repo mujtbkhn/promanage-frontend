@@ -20,14 +20,12 @@ const ResetPage = () => {
   }, []);
 
   const updateUser = async () => {
-    setError(""); // Reset error state
+    setError(""); 
     try {
       await resetUser(name, currentPassword, newPassword, email);
 
-      // Refetch the updated user details
       const updatedUser = getUserFromToken();
 
-      // Update userDetails and reset form fields
       setUserDetails(updatedUser);
       setName(updatedUser.name);
       setEmail(updatedUser.email);

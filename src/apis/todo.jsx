@@ -5,20 +5,6 @@ const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/todo";
 
 const token = localStorage.getItem("token");
 
-export const logTodo = async () => {
-  try {
-    const response = await axios.get(`${BACKEND_URL}/logTodo`, {
-      headers: {
-        Authorization: `${token}`,
-      },
-    });
-    // console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Failed to log todo:", error);
-  }
-};
-
 export const getAnalytics = async () => {
   try {
     const response = await axios.get(`${BACKEND_URL}/analytics`, {
@@ -26,7 +12,6 @@ export const getAnalytics = async () => {
         Authorization: `${token}`,
       },
     });
-    // console.log(response.data);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -58,7 +43,6 @@ export const getTodoById = async (todoId) => {
         Authorization: `${token}`,
       },
     });
-    // console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -68,7 +52,6 @@ export const getTodoById = async (todoId) => {
 export const viewTodoById = async (todoId) => {
   try {
     const response = await axios.get(`${BACKEND_URL}/view/${todoId}`);
-    // console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -136,7 +119,6 @@ export const moveTask = async (todoId, section) => {
         },
       }
     );
-    // console.log("Task moved successfully:", response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -150,7 +132,6 @@ export const deleteTodoById = async (todoId) => {
         Authorization: `${token}`,
       },
     });
-    // console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;

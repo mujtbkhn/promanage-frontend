@@ -85,7 +85,6 @@ export const resetUser = async (
         },
       }
     );
-    // console.log(response.data);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -98,7 +97,6 @@ export const resetUser = async (
 
 export const addUserByEmail = async (email) => {
   const user = getUserFromToken1();
-  // console.log(user.userId);
   const token = localStorage.getItem("token");
   try {
     const response = await axios.post(
@@ -128,7 +126,6 @@ export const getUserByEmail = async () => {
         Authorization: `${token}`,
       },
     });
-    // console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;

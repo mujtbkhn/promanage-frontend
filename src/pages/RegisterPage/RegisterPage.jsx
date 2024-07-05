@@ -31,8 +31,7 @@ const RegisterPage = () => {
     }
 
     try {
-      const data = await registerUser(name, email, password);
-      // console.log(data);
+      await registerUser(name, email, password);
       navigate("/");
     } catch (error) {
       if (error.response) {

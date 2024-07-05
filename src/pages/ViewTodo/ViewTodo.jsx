@@ -13,9 +13,8 @@ const ViewTodo = ({ todoId }) => {
   const fetchTodoDetails = async () => {
     try {
       const response = await viewTodoById(todoId);
-      const fetchedTodo = response; // Adjust according to your API response structure
+      const fetchedTodo = response; 
 
-      // console.log(fetchedTodo);
       setTodo(fetchedTodo);
     } catch (error) {
       console.error("Error fetching todo:", error);
@@ -26,7 +25,7 @@ const ViewTodo = ({ todoId }) => {
   }, []);
 
   const formatDate = (dateString) => {
-    if (!dateString) return ""; // Handle case where dateString is undefined or null
+    if (!dateString) return ""; 
     const date = parseISO(dateString);
     return format(date, "MMM do");
   };

@@ -1,27 +1,24 @@
 ul {
-  max-height: 100px; /* Adjust the maximum height as needed */
-  overflow-y: auto; /* Enable vertical scrolling */
-  margin-top: 0; /* Reset margin to ensure it doesn't add extra space */
-  margin-bottom: 0; /* Reset margin to ensure it doesn't add extra space */
+  max-height: 100px;
+  overflow-y: auto;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .todo_main {
   display: flex;
   flex-direction: column;
-  /* justify-content: start; */
-  /* align-items: start; */
   width: 300px;
   max-height: 400px;
   background-color: white;
   padding: 1rem;
   margin: 1rem;
   border-radius: 1rem;
-  /* font-size: 20px; */
 }
 .pointer {
   cursor: pointer;
 }
-ul{
+ul {
   max-height: 500px;
   padding-right: 10px;
 }
@@ -37,7 +34,7 @@ ul{
 .show {
   position: absolute;
   right: 5px;
-  top: 1.25rem;
+  top: 2rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   width: 100px;
   height: 100px;
@@ -60,15 +57,12 @@ ul{
   height: 1.5rem;
   padding-bottom: 1rem;
 }
-.todo_checklist {
-}
 .todo_button {
   margin-top: 10px;
 }
 .todo_main button {
   border-radius: 1rem;
   border: none;
-  /* font-size: 16px; */
   padding: 0.5rem;
 }
 .priority__dot {
@@ -90,16 +84,16 @@ ul{
 .priority__dot.low {
   background-color: green;
 }
-.priority__button.selected{
-    background-color: gray;
+.priority__button.selected {
+  background-color: gray;
 }
 .custom_button {
-  background-color: #EEECEC !important;
-  color: initial !important; /* Resetting color to initial */
-  border: none !important; /* Ensure no border is applied */
+  background-color: #eeecec !important;
+  color: initial !important;
+  border: none !important;
 }
 
-.color-assign{
+.color-assign {
   background-color: #f1e6e5;
   height: 20px;
   padding: 5px;

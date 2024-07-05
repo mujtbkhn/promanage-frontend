@@ -22,9 +22,6 @@ body {
 .flex.active {
   background-color: #ecf4fd;
 }
-/* .flex:active {
-  background-color: #ecf4fd;
-} */
 .modal__actions {
   display: flex;
   flex-direction: column;
