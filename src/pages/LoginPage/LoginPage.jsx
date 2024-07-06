@@ -14,6 +14,7 @@ const LoginPage = () => {
     try {
       await loginUser(email, password);
       navigate("/");
+      window.location.reload()
     } catch (error) {
       setError(error.message || "Login failed. Please try again.");
       console.error("Login Error:", error);

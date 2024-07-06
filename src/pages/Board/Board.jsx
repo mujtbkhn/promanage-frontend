@@ -17,6 +17,7 @@ import {
   moveTask,
   updateChecklistItem,
 } from "../../apis/todo";
+import { format, getDate, getMonth, getYear } from "date-fns";
 
 const Board = () => {
   const [open, setOpen] = useState(false);
@@ -95,7 +96,7 @@ const Board = () => {
   };
 
   const handleInputFocus = () => {
-    setIsEmailListVisible(true);
+    setIsEmailListVisible((prev) => !prev);
   };
 
   const handleInputBlur = () => {
@@ -115,7 +116,7 @@ const Board = () => {
   const handleCloseAddPeopleModal = () => {
     setOpenAddPeopleModal(false);
     setAddPeopleMessage("");
-    window.location.reload()
+    window.location.reload();
   };
 
   const resetFormFields = () => {
@@ -131,6 +132,7 @@ const Board = () => {
   };
 
   const handleCheckboxChange = async (todoId, itemIndex, completed) => {
+    setIsLoading(true);
     try {
       await updateChecklistItem(todoId, itemIndex, completed);
       const updatedTodos = todos.map((todo) => {
@@ -146,9 +148,10 @@ const Board = () => {
         return todo;
       });
       setTodos(updatedTodos);
-      // fetchTodos()
     } catch (error) {
       console.error("Error updating checklist item:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -227,7 +230,6 @@ const Board = () => {
       await getUserByEmail();
       setAddPeopleMessage(`Added ${email}`);
       setAddPeopleError(""); // Clear any previous error message
-
     } catch (error) {
       setAddPeopleError(error?.message || "Error adding people");
       console.error("Error adding people", error);
@@ -237,33 +239,14 @@ const Board = () => {
   const checkedCount = checklist.filter((item) => item.completed).length;
 
   const formatDate = (date) => {
-    const day = date.getDate();
-    const month = date.toLocaleString("default", { month: "short" });
-    const year = date.getFullYear();
-    const daySuffix = getDaySuffix(day);
-    return `${day}${daySuffix} ${month}, ${year}`;
+    return format(date, "do MMM, yyyy");
   };
 
-  const getDaySuffix = (day) => {
-    if (day > 3 && day < 21) return "th";
-    switch (day % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
-    }
-  };
-
-  // Example usage
   const date = formatDate(new Date());
 
   const handleAssignEmail = (email) => {
     setAssignedTo(email);
-    // setIsEmailListVisible(false);
+    setIsEmailListVisible(false);
   };
 
   return (
@@ -316,7 +299,7 @@ const Board = () => {
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
           isLoading={isLoading}
-          dueDate={dueDate ? formatDate(new Date(dueDate)) : "No Due Date"}
+          // dueDate={dueDate ? formatDate(new Date(dueDate)) : "No Due Date"}
         />
         <TodoComp
           name="IN PROGRESS"
@@ -398,8 +381,7 @@ const Board = () => {
               className="modal__input"
               value={assignedTo}
               onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
-              // readOnly
+              // onBlur={handleInputBlur}
             />
             {isEmailListVisible && (
               <div className="allowed-emails-list">
@@ -474,7 +456,7 @@ const Board = () => {
               onChange={(date) => setDueDate(date)}
               placeholderText="Select Due Date"
               className="due__date"
-              dateFormat="MMMM d, yyyy"
+              dateFormat="dd/MM/yyyy"
             />
             <div className="modal__actions__button">
               <button

@@ -33,6 +33,7 @@ const RegisterPage = () => {
     try {
       await registerUser(name, email, password);
       navigate("/");
+      window.location.reload()
     } catch (error) {
       if (error.response) {
         if (error.response.data.message === "Email already exists") {
