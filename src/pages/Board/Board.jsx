@@ -37,6 +37,7 @@ const Board = () => {
   const [addPeopleError, setAddPeopleError] = useState("");
   const [isEmailListVisible, setIsEmailListVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [assignErrorMessage, setAssignErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -96,7 +97,14 @@ const Board = () => {
   };
 
   const handleInputFocus = () => {
-    setIsEmailListVisible((prev) => !prev);
+    if (allowedEmails.length === 0) {
+      setAssignErrorMessage(
+        "Please add people to the board to assign them a task"
+      );
+    } else {
+      setIsEmailListVisible((prev) => !prev);
+      setAssignErrorMessage("");
+    }
   };
 
   const handleInputBlur = () => {
@@ -383,6 +391,9 @@ const Board = () => {
               onFocus={handleInputFocus}
               // onBlur={handleInputBlur}
             />
+            {assignErrorMessage && (
+              <p className="error">{assignErrorMessage}</p>
+            )}
             {isEmailListVisible && (
               <div className="allowed-emails-list">
                 {allowedEmails?.map((email, i) => (
