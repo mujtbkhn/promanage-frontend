@@ -27,6 +27,7 @@ const Todo = ({
   const [allowedEmails, setAllowedEmails] = useState(null);
   const [isCreator, setIsCreator] = useState(false);
   const [newChecklistItem, setNewChecklistItem] = useState("");
+  const [assignErrorMessage, setAssignErrorMessage] = useState("");
   const [editedTodo, setEditedTodo] = useState({
     title: todo.title || "",
     priority: todo.priority || "",
@@ -198,7 +199,14 @@ const Todo = ({
   };
 
   const toggleAssignDropdown = () => {
-    setIsAssignDropdownOpen(!isAssignDropdownOpen);
+    if (allowedEmails.length === 0) {
+      setAssignErrorMessage(
+        "Please add people to the board to assign them a task"
+      );
+    } else {
+      setIsAssignDropdownOpen(!isAssignDropdownOpen);
+      setAssignErrorMessage("");
+    }
   };
 
   const trimmedTitle =
@@ -418,6 +426,9 @@ const Todo = ({
                     disabled={!isCreator}
                   />
 
+                  {assignErrorMessage && (
+                    <p className="error">{assignErrorMessage}</p>
+                  )}
                   {isCreator && isAssignDropdownOpen && (
                     <div className="allowed-emails-list">
                       {allowedEmails?.map((email, i) => (
