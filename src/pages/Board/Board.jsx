@@ -40,6 +40,10 @@ const Board = () => {
   const [assignErrorMessage, setAssignErrorMessage] = useState("");
 
   useEffect(() => {
+    console.log(dueDate);
+  }, [dueDate]);
+
+  useEffect(() => {
     const fetchUserDetails = async () => {
       const user = await getUserFromToken();
       setUserDetails(user);
@@ -65,9 +69,6 @@ const Board = () => {
   useEffect(() => {
     allowed();
   }, []);
-  useEffect(() => {
-    console.log("assigned to :", assignedTo);
-  }, [assignedTo]);
 
   useEffect(() => {}, [userDetails]);
 
@@ -198,21 +199,21 @@ const Board = () => {
         return;
       }
 
+      const formattedDueDate = dueDate ? format(dueDate, 'dd-MM-yyyy') : null;
+
       const todoData = {
         title,
         priority: selectedPriority,
         checklist,
         section: "TODO",
-        dueDate: dueDate ? dueDate.toISOString() : null,
+        dueDate: formattedDueDate,
       };
 
       if (assignedTo) {
         todoData.assignedTo = assignedTo;
       }
 
-      if (dueDate) {
-        todoData.dueDate = dueDate;
-      }
+      // console.log("Due Date:", dueDate);
 
       await getCreateTodo(todoData);
 
@@ -298,6 +299,7 @@ const Board = () => {
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
           isLoading={isLoading}
+          dueDate={dueDate}
         />
         <TodoComp
           name="TODO"
@@ -307,7 +309,7 @@ const Board = () => {
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
           isLoading={isLoading}
-          // dueDate={dueDate ? formatDate(new Date(dueDate)) : "No Due Date"}
+          dueDate={dueDate}
         />
         <TodoComp
           name="IN PROGRESS"
@@ -316,6 +318,7 @@ const Board = () => {
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
           isLoading={isLoading}
+          dueDate={dueDate}
         />
         <TodoComp
           name="DONE"
@@ -324,6 +327,7 @@ const Board = () => {
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
           isLoading={isLoading}
+          dueDate={dueDate}
         />
       </div>
       <Modal
@@ -464,7 +468,9 @@ const Board = () => {
           <div className="modal__section modal__buttons">
             <DatePicker
               selected={dueDate}
-              onChange={(date) => setDueDate(date)}
+              onChange={(date) => {
+                setDueDate(date);
+              }}
               placeholderText="Select Due Date"
               className="due__date"
               dateFormat="dd/MM/yyyy"
