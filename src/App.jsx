@@ -13,6 +13,7 @@ import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
+
   return (
     <>
       <Toaster position="top-right" />

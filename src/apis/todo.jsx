@@ -29,9 +29,10 @@ export const getCreateTodo = async (todoData) => {
         Authorization: `${token}`,
       },
     });
-    console.log(response.data);
+    // console.log("Response from create todo:", response.data);
     return response.data;
   } catch (error) {
+    console.error("Error in getCreateTodo:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -83,7 +84,6 @@ export const updateTodo = async (todoId, updatedTodo) => {
         },
       }
     );
-    // console.log("Todo updated successfully:", response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -101,7 +101,6 @@ export const updateChecklistItem = async (todoId, itemIndex, completed) => {
         },
       }
     );
-    // console.log("Checklist item updated successfully:", response.data);
     return response.data;
   } catch (error) {
     throw error;

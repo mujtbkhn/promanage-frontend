@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { viewTodoById } from "../../apis/todo";
 import LOGOO from "../../images/logoo.png";
-import { format, parseISO } from "date-fns";
 import "./ViewTodo.css";
 import { useNavigate } from "react-router-dom";
 
@@ -23,12 +22,6 @@ const ViewTodo = ({ todoId }) => {
   useEffect(() => {
     fetchTodoDetails();
   }, []);
-
-  const formatDate = (dateString) => {
-    if (!dateString) return ""; 
-    const date = parseISO(dateString);
-    return format(date, "MMM do");
-  };
 
   return (
     <>
@@ -88,7 +81,7 @@ const ViewTodo = ({ todoId }) => {
               </div>
             ))}
           </ul>
-          {todo.dueDate && (
+          {todo.date && (
             <div
               style={{
                 display: "flex",
@@ -98,9 +91,9 @@ const ViewTodo = ({ todoId }) => {
             >
               <h5>DUE DATE</h5>
               <button
-                className="dueDate__button"
+                className="date__button"
               >
-                {formatDate(todo?.dueDate)}
+                {todo?.date}
               </button>
             </div>
           )}

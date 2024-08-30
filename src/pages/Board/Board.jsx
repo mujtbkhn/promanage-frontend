@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
+import { DatePicker } from "antd";
+import dayjs from 'dayjs';
 import TodoComp from "../../components/TodoComp/TodoComp";
 import Delete from "../../images/Delete.png";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import "./Board.css";
 import {
   addUserByEmail,
@@ -17,7 +17,7 @@ import {
   moveTask,
   updateChecklistItem,
 } from "../../apis/todo";
-import { format, getDate, getMonth, getYear } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 const Board = () => {
   const [open, setOpen] = useState(false);
@@ -25,9 +25,9 @@ const Board = () => {
   const [selectedPriority, setSelectedPriority] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
   const [checklist, setChecklist] = useState([{ item: "", completed: false }]);
-  const [dueDate, setDueDate] = useState(null);
   const [userDetails, setUserDetails] = useState("");
   const [todos, setTodos] = useState([]);
+  const [date, setDate] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("week");
   const [formErrors, setFormErrors] = useState({});
   const [openAddPeopleModal, setOpenAddPeopleModal] = useState(false);
@@ -39,9 +39,13 @@ const Board = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [assignErrorMessage, setAssignErrorMessage] = useState("");
 
-  useEffect(() => {
-    console.log(dueDate);
-  }, [dueDate]);
+  // useEffect(() => {
+  //   console.log("date : ", date ? date.format("YYYY-MM-DD HH:mm:ss") : "No date selected");
+  // }, [date])
+
+  function onChange(value) {
+    setDate(value);
+  }
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -70,7 +74,7 @@ const Board = () => {
     allowed();
   }, []);
 
-  useEffect(() => {}, [userDetails]);
+  useEffect(() => { }, [userDetails]);
 
   const allowed = async () => {
     try {
@@ -98,7 +102,7 @@ const Board = () => {
   };
 
   const handleInputFocus = () => {
-    if (allowedEmails.length === 0) {
+    if (allowedEmails?.length === 0) {
       setAssignErrorMessage(
         "Please add people to the board to assign them a task"
       );
@@ -106,10 +110,6 @@ const Board = () => {
       setIsEmailListVisible((prev) => !prev);
       setAssignErrorMessage("");
     }
-  };
-
-  const handleInputBlur = () => {
-    setTimeout(() => setIsEmailListVisible(false), 200);
   };
 
   const onOpenModal = () => setOpen(true);
@@ -133,7 +133,7 @@ const Board = () => {
     setSelectedPriority("");
     setAssignedTo("");
     setChecklist([{ item: "", completed: false }]);
-    setDueDate(null);
+    setDate("")
   };
 
   const handlePriorityClick = (priority) => {
@@ -141,26 +141,23 @@ const Board = () => {
   };
 
   const handleCheckboxChange = async (todoId, itemIndex, completed) => {
-    setIsLoading(true);
     try {
       await updateChecklistItem(todoId, itemIndex, completed);
-      const updatedTodos = todos.map((todo) => {
-        if (todo._id === todoId) {
-          const updatedChecklist = todo.checklist.map((item, index) => {
-            if (index === itemIndex) {
-              return { ...item, completed };
-            }
-            return item;
-          });
-          return { ...todo, checklist: updatedChecklist };
-        }
-        return todo;
-      });
-      setTodos(updatedTodos);
+      setTodos(prevTodos =>
+        prevTodos.map(todo => {
+          if (todo._id === todoId) {
+            return {
+              ...todo,
+              checklist: todo.checklist.map((item, index) =>
+                index === itemIndex ? { ...item, completed } : item
+              )
+            };
+          }
+          return todo;
+        })
+      );
     } catch (error) {
       console.error("Error updating checklist item:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -198,23 +195,18 @@ const Board = () => {
       if (!validateForm()) {
         return;
       }
-
-      const formattedDueDate = dueDate ? format(dueDate, 'dd-MM-yyyy') : null;
-
       const todoData = {
         title,
         priority: selectedPriority,
         checklist,
         section: "TODO",
-        dueDate: formattedDueDate,
+        date: date ? date.toISOString() : null
       };
 
       if (assignedTo) {
         todoData.assignedTo = assignedTo;
       }
-
-      // console.log("Due Date:", dueDate);
-
+      // console.log("Sending todo data:", todoData);  // Log the data being sent
       await getCreateTodo(todoData);
 
       onCloseModal();
@@ -247,22 +239,18 @@ const Board = () => {
 
   const checkedCount = checklist.filter((item) => item.completed).length;
 
-  const formatDate = (date) => {
-    return format(date, "do MMM, yyyy");
-  };
-
-  const date = formatDate(new Date());
-
   const handleAssignEmail = (email) => {
     setAssignedTo(email);
     setIsEmailListVisible(false);
   };
 
+  const today = new Date().toISOString().split("T")[0];
+  
   return (
     <div className="board__top">
       <div className="top__heading">
         <h2>Welcome ! {userDetails?.name}</h2>
-        <p>{date}</p>
+        <p> {format(parseISO(today), "d MMM")}</p>
       </div>
       <div className="top__heading">
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -299,7 +287,7 @@ const Board = () => {
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
           isLoading={isLoading}
-          dueDate={dueDate}
+          date={date}
         />
         <TodoComp
           name="TODO"
@@ -309,7 +297,7 @@ const Board = () => {
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
           isLoading={isLoading}
-          dueDate={dueDate}
+          date={date}
         />
         <TodoComp
           name="IN PROGRESS"
@@ -318,7 +306,7 @@ const Board = () => {
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
           isLoading={isLoading}
-          dueDate={dueDate}
+          date={date}
         />
         <TodoComp
           name="DONE"
@@ -327,7 +315,7 @@ const Board = () => {
           onCheckboxChange={handleCheckboxChange}
           fetchTodos={fetchTodos}
           isLoading={isLoading}
-          dueDate={dueDate}
+          date={date}
         />
       </div>
       <Modal
@@ -357,25 +345,22 @@ const Board = () => {
                 Select Priority<span style={{ color: "red" }}>*</span>
               </h3>
               <div
-                className={`priority__button ${
-                  selectedPriority === "HIGH" ? "selected" : ""
-                }`}
+                className={`priority__button ${selectedPriority === "HIGH" ? "selected" : ""
+                  }`}
                 onClick={() => handlePriorityClick("HIGH")}
               >
                 <span className="priority__dot high" /> High Priority
               </div>
               <div
-                className={`priority__button ${
-                  selectedPriority === "MODERATE" ? "selected" : ""
-                }`}
+                className={`priority__button ${selectedPriority === "MODERATE" ? "selected" : ""
+                  }`}
                 onClick={() => handlePriorityClick("MODERATE")}
               >
                 <span className="priority__dot moderate" /> Moderate Priority
               </div>
               <div
-                className={`priority__button ${
-                  selectedPriority === "LOW" ? "selected" : ""
-                }`}
+                className={`priority__button ${selectedPriority === "LOW" ? "selected" : ""
+                  }`}
                 onClick={() => handlePriorityClick("LOW")}
               >
                 <span className="priority__dot low" /> Low Priority
@@ -393,7 +378,6 @@ const Board = () => {
               className="modal__input"
               value={assignedTo}
               onFocus={handleInputFocus}
-              // onBlur={handleInputBlur}
             />
             {assignErrorMessage && (
               <p className="error">{assignErrorMessage}</p>
@@ -435,14 +419,13 @@ const Board = () => {
                   <input
                     type="checkbox"
                     checked={item.completed}
-                    onChange={() =>
-                      handleCheckboxChange(item._id, index, !item.completed)
-                    }
+                    onChange={() => handleCheckboxChange(index)}
                     className="checklist__checkbox"
                   />
                   <input
                     type="text"
                     value={item.item}
+                    placeholder="Enter the checklist item"
                     onChange={(e) =>
                       handleChecklistChange(index, e.target.value)
                     }
@@ -466,15 +449,9 @@ const Board = () => {
           </div>
 
           <div className="modal__section modal__buttons">
-            <DatePicker
-              selected={dueDate}
-              onChange={(date) => {
-                setDueDate(date);
-              }}
-              placeholderText="Select Due Date"
-              className="due__date"
-              dateFormat="dd/MM/yyyy"
-            />
+            <DatePicker onChange={onChange}
+              value={date}
+              format="YYYY-MM-DD" />
             <div className="modal__actions__button">
               <button
                 className="modal__action__button cancel"

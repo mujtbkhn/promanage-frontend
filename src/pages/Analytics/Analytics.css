@@ -6,7 +6,7 @@
 }
 
 .analytics-container > * {
-  flex: 1 1 calc(50% - 1rem); /* Each item will take up 50% of the container width minus the gap */
+  flex: 1 1 calc(50% - 1rem); 
   box-sizing: border-box;
 }
 
