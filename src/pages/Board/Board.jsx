@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
 import { DatePicker } from "antd";
-import dayjs from 'dayjs';
 import TodoComp from "../../components/TodoComp/TodoComp";
 import Delete from "../../images/Delete.png";
 import "./Board.css";
@@ -18,6 +17,7 @@ import {
   updateChecklistItem,
 } from "../../apis/todo";
 import { format, parseISO } from "date-fns";
+import { toast } from 'react-hot-toast';
 
 const Board = () => {
   const [open, setOpen] = useState(false);
@@ -38,10 +38,6 @@ const Board = () => {
   const [isEmailListVisible, setIsEmailListVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [assignErrorMessage, setAssignErrorMessage] = useState("");
-
-  // useEffect(() => {
-  //   console.log("date : ", date ? date.format("YYYY-MM-DD HH:mm:ss") : "No date selected");
-  // }, [date])
 
   function onChange(value) {
     setDate(value);
@@ -87,13 +83,18 @@ const Board = () => {
 
   const fetchTodos = async (filter) => {
     setIsLoading(true);
+    toast.loading('Loading todos... This may take up to 50 seconds if the server was inactive.', {
+      duration: 50000, 
+    });
     try {
       const data = await getTodos(filter);
       setTodos(data);
     } catch (error) {
       console.error("Error fetching todos:", error);
+      toast.error('Failed to load todos. Please try again.');
     } finally {
       setIsLoading(false);
+      toast.dismiss();
     }
   };
 
@@ -206,7 +207,6 @@ const Board = () => {
       if (assignedTo) {
         todoData.assignedTo = assignedTo;
       }
-      // console.log("Sending todo data:", todoData);  // Log the data being sent
       await getCreateTodo(todoData);
 
       onCloseModal();
@@ -230,7 +230,7 @@ const Board = () => {
       await addUserByEmail(email);
       await getUserByEmail();
       setAddPeopleMessage(`Added ${email}`);
-      setAddPeopleError(""); // Clear any previous error message
+      setAddPeopleError(""); 
     } catch (error) {
       setAddPeopleError(error?.message || "Error adding people");
       console.error("Error adding people", error);
@@ -245,7 +245,7 @@ const Board = () => {
   };
 
   const today = new Date().toISOString().split("T")[0];
-  
+
   return (
     <div className="board__top">
       <div className="top__heading">

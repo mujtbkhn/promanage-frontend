@@ -36,10 +36,6 @@ const Todo = ({
         date: todo.date ? format(parseISO(todo.date.split("T")[0]), "d MMM") : null,
     });
 
-    // useEffect(() => {
-    //     console.log(editedTodo);
-    // }, [editedTodo]);
-
     useEffect(() => {
         if (editModalOpen && todo._id) {
             fetchTodoDetails(todo._id);

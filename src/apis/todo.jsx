@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const BACKEND_URL = "https://promanage-backend-xwqo.onrender.com/api/v1/todo";
 // const BACKEND_URL = "http://localhost:3000/api/v1/todo";
@@ -23,18 +24,27 @@ export const getAnalytics = async () => {
 };
 
 export const getCreateTodo = async (todoData) => {
-  try {
-    const response = await axios.post(`${BACKEND_URL}/create`, todoData, {
-      headers: {
-        Authorization: `${token}`,
-      },
-    });
-    // console.log("Response from create todo:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error in getCreateTodo:", error.response?.data || error.message);
-    throw error;
-  }
+  return toast.promise(
+    new Promise(async (resolve, reject) => {
+
+      try {
+        const response = await axios.post(`${BACKEND_URL}/create`, todoData, {
+          headers: {
+            Authorization: `${token}`,
+          },
+        });
+        resolve(response.data);
+      } catch (error) {
+        console.error("Error in getCreateTodo:", error.response?.data || error.message);
+        reject(error);
+      }
+    }),
+    {
+      loading: 'Creating todo... This may take up to 50 seconds if the server was inactive.',
+      success: 'Todo created successfully!',
+      error: 'Failed to create todo. Please try again.',
+    }
+  )
 };
 
 export const getTodoById = async (todoId) => {
@@ -66,7 +76,6 @@ export const getTodos = async (filter) => {
         Authorization: `${token}`,
       },
     });
-    // console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
